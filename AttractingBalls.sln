@@ -1,0 +1,16 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AttractingBalls", "AttractingBalls\AttractingBalls.csproj", "{66B32092-BE1A-48CC-A02B-447BFCA34405}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{66B32092-BE1A-48CC-A02B-447BFCA34405}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{66B32092-BE1A-48CC-A02B-447BFCA34405}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{66B32092-BE1A-48CC-A02B-447BFCA34405}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{66B32092-BE1A-48CC-A02B-447BFCA34405}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
