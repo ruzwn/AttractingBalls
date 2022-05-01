@@ -39,10 +39,13 @@ namespace AttractingBalls
 			Gr = gr;
 		}
 
+		private IncreasingBall increasingBall;
+		
 		public void AddBalls(Ball[] balls, Point destinitionPoint)
 		{
 			IsBusy = true;
 			_destinitionPoint = destinitionPoint;
+			increasingBall = new IncreasingBall(_destinitionPoint, BallRadius);
 			foreach (var ball in balls)
 			{
 				ball.DestinitionPoint = destinitionPoint;
@@ -66,8 +69,6 @@ namespace AttractingBalls
 					tGr = _bGr.Graphics;
 				}
 
-				IncreasingBall increasingBall = new IncreasingBall(_destinitionPoint, BallRadius);
-
 				var pen = new Pen(Color.Black);
 
 				do
@@ -85,10 +86,10 @@ namespace AttractingBalls
 						// в потоке аниматора рисуем!!! в потоке increasingBall только двигаем
 						increasingBall.Start();
 						increasingBall.Paint(tGr);
-						//Thread.Sleep(30);
 						if (!increasingBall.Thread.IsAlive)
 						{
 							_balls.Clear();
+								//tGr.Clear(Color.White);
 							IsBusy = false;
 						}
 					}

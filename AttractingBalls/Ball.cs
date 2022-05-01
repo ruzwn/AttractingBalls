@@ -61,17 +61,16 @@ namespace AttractingBalls
 			_thread.Start();
 		}
 
-		private int RepeatCount = 50;
-
 		private bool Move()
 		{
-			// move to destinitionPoint
-			if (RepeatCount < 0)
+			if (_locationPoint.X + _radius >= DestinitionPoint.X &&
+			    _locationPoint.X - _radius <= DestinitionPoint.X &&
+			    _locationPoint.Y + _radius >= DestinitionPoint.Y &&
+			    _locationPoint.Y - _radius <= DestinitionPoint.Y)
 			{
 				return false;
 			}
 
-			RepeatCount--;
 			_locationPoint.X += _speed.X;
 			_locationPoint.Y += _speed.Y;
 			return true;

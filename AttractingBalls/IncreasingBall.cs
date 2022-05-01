@@ -5,19 +5,19 @@ namespace AttractingBalls
 {
 	public class IncreasingBall
 	{
-		public Point DestinitionPoint;
-		public int Dx;
+		private Point _destinitionPoint;
+		private int _dx;
 		public Thread Thread;
 
-		public IncreasingBall(Point destinitionPoint, int dx = Animator.BallRadius)
+		public IncreasingBall(Point destinitionPoint, int dx)
 		{
-			DestinitionPoint = destinitionPoint;
-			Dx = dx;
+			_destinitionPoint = destinitionPoint;
+			_dx = dx;
 		}
 
 		public void Start()
 		{
-			if (Thread?.IsAlive ?? false)
+			if (!(Thread?.IsAlive ?? true))
 			{
 				return;
 			}
@@ -34,19 +34,19 @@ namespace AttractingBalls
 
 		public void Paint(Graphics gr)
 		{
-			gr.FillEllipse(Brushes.Coral, DestinitionPoint.X, DestinitionPoint.Y, Dx, Dx);
+			gr.FillEllipse(Brushes.Coral, _destinitionPoint.X, _destinitionPoint.Y, _dx, _dx);
 		}
 
 		private bool Move()
 		{
-			if (Dx > 2000)
+			if (_dx > 2000)
 			{
 				return false;
 			}
 			
-			DestinitionPoint.X -= 25;
-			DestinitionPoint.Y -= 25;
-			Dx += 25;
+			_destinitionPoint.X -= 10;
+			_destinitionPoint.Y -= 10;
+			_dx += 25;
 			return true;
 		}
 	}

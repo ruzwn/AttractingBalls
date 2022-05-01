@@ -29,7 +29,10 @@ namespace AttractingBalls
 				while (true)
 				{
 					var balls = _data.GetData();
-					var destinitionPoint = new Point(_rnd.Next(_animator.CSize.Width), _rnd.Next(_animator.CSize.Height));
+					var destinitionPoint = new Point(
+						_rnd.Next(_animator.CSize.Width - Animator.BallRadius),
+						_rnd.Next(_animator.CSize.Height - Animator.BallRadius)
+					);
 					while (_animator.IsBusy)
 					{
 						Thread.Sleep(30);
