@@ -8,8 +8,8 @@ namespace AttractingBalls
 	{
 		private readonly Size _cSize;
 		private Point _locationPoint;
-		private readonly int _radius;
-		private (int X, int Y) _speed;
+		private readonly int _diameter;
+		private (double X, double Y) _speed;
 		private Color _color;
 		private readonly ColorType _colorType;
 		private Thread _thread;
@@ -23,11 +23,16 @@ namespace AttractingBalls
 
 		public Point DestinitionPoint { get; set; }
 
+		public Color Color => _color;
+
 		public Ball(Size containerSize, ColorType colorType)
 		{
 			_cSize = containerSize;
-			_radius = Animator.BallRadius;
-			_locationPoint = new Point(RandomGen.Next(_cSize.Width), RandomGen.Next(_cSize.Height));
+			_diameter = Animator.BallDiameter;
+			_locationPoint = new Point(
+				RandomGen.Next(_cSize.Width - Animator.BallDiameter),
+				RandomGen.Next(_cSize.Height - Animator.BallDiameter)
+			);
 			_colorType = colorType;
 			SetColor();
 			IsAlive = true;
@@ -35,7 +40,7 @@ namespace AttractingBalls
 
 		public void Paint(Graphics graphics)
 		{
-			graphics.FillEllipse(new SolidBrush(_color), _locationPoint.X, _locationPoint.Y, _radius, _radius);
+			graphics.FillEllipse(new SolidBrush(_color), _locationPoint.X, _locationPoint.Y, _diameter, _diameter);
 		}
 
 		public void Animate()
@@ -45,9 +50,9 @@ namespace AttractingBalls
 				return;
 			}
 
-			_speed.X = (DestinitionPoint.X - _locationPoint.X) / 100;
-			_speed.Y = (DestinitionPoint.Y - _locationPoint.Y) / 100;
-			
+			_speed.X = (DestinitionPoint.X - _locationPoint.X) / 50d;
+			_speed.Y = (DestinitionPoint.Y - _locationPoint.Y) / 50d;
+
 			_thread = new Thread(() =>
 			{
 				do
@@ -63,16 +68,17 @@ namespace AttractingBalls
 
 		private bool Move()
 		{
-			if (_locationPoint.X + _radius >= DestinitionPoint.X &&
-			    _locationPoint.X - _radius <= DestinitionPoint.X &&
-			    _locationPoint.Y + _radius >= DestinitionPoint.Y &&
-			    _locationPoint.Y - _radius <= DestinitionPoint.Y)
+			if (_locationPoint.X + _diameter >= DestinitionPoint.X &&
+			    _locationPoint.X - _diameter <= DestinitionPoint.X &&
+			    _locationPoint.Y + _diameter >= DestinitionPoint.Y &&
+			    _locationPoint.Y - _diameter <= DestinitionPoint.Y)
 			{
+				Animator.Color = _color;
 				return false;
 			}
 
-			_locationPoint.X += _speed.X;
-			_locationPoint.Y += _speed.Y;
+			_locationPoint.X += (int) _speed.X;
+			_locationPoint.Y += (int) _speed.Y;
 			return true;
 		}
 

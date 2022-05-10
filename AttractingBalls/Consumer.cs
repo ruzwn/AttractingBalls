@@ -30,8 +30,8 @@ namespace AttractingBalls
 				{
 					var balls = _data.GetData();
 					var destinitionPoint = new Point(
-						_rnd.Next(_animator.CSize.Width - Animator.BallRadius),
-						_rnd.Next(_animator.CSize.Height - Animator.BallRadius)
+						_rnd.Next(_animator.CSize.Width - Animator.BallDiameter),
+						_rnd.Next(_animator.CSize.Height - Animator.BallDiameter)
 					);
 					while (_animator.IsBusy)
 					{

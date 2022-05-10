@@ -8,11 +8,13 @@ namespace AttractingBalls
 {
 	public class Animator
 	{
-		private BufferedGraphics _bGr;
+		private BufferedGraphics _bufGr;
 		private Graphics _gr;
 		private Thread _thread;
 		private readonly List<Ball> _balls = new List<Ball>();
 		private Point _destinitionPoint;
+		private readonly Random _rnd = new Random();
+		private IncreasingBall _increasingBall;
 
 		private Graphics Gr
 		{
@@ -20,18 +22,20 @@ namespace AttractingBalls
 			set
 			{
 				_gr = value;
-				_bGr = BufferedGraphicsManager
+				_bufGr = BufferedGraphicsManager
 					.Current
 					.Allocate(_gr, Rectangle.Ceiling(_gr.VisibleClipBounds));
-				_bGr.Graphics.Clear(Color.White);
+				_bufGr.Graphics.Clear(Color.White);
 			}
 		}
 
-		public const int BallRadius = 100;
+		public const int BallDiameter = 100;
 
 		public bool IsBusy { get; private set; }
 
 		public Size CSize { get; }
+
+		public static Color Color { get; set; } = Color.Black;
 
 		public Animator(Size containerSize, Graphics gr)
 		{
@@ -39,16 +43,23 @@ namespace AttractingBalls
 			Gr = gr;
 		}
 
-		private IncreasingBall increasingBall;
-		
 		public void AddBalls(Ball[] balls, Point destinitionPoint)
 		{
+
+			// Когда один шарик достиг цели, берется из очереди шар того же цвета и двигается к своей области
+			// и так с каждым шариком (один исчез, другой появился)
+
 			IsBusy = true;
 			_destinitionPoint = destinitionPoint;
-			increasingBall = new IncreasingBall(_destinitionPoint, BallRadius);
+			var a = _rnd.Next(256);
+			var r = (int) balls[(int) ColorType.Red].Color.R;
+			var g = (int) balls[(int) ColorType.Green].Color.G;
+			var b = (int) balls[(int) ColorType.Blue].Color.B;
+			var color = Color.FromArgb(a, r, g, b);
+			_increasingBall = new IncreasingBall(_destinitionPoint, BallDiameter, color);
 			foreach (var ball in balls)
 			{
-				ball.DestinitionPoint = destinitionPoint;
+				ball.DestinitionPoint = _destinitionPoint;
 				ball.Animate();
 				_balls.Add(ball);
 			}
@@ -63,38 +74,36 @@ namespace AttractingBalls
 
 			_thread = new Thread(() =>
 			{
-				Graphics tGr;
-				lock (_bGr)
+				Graphics tmpGr;
+				lock (_bufGr)
 				{
-					tGr = _bGr.Graphics;
+					tmpGr = _bufGr.Graphics;
 				}
-
-				var pen = new Pen(Color.Black);
 
 				do
 				{
-					tGr.Clear(Color.White);
-					tGr.DrawEllipse(pen, _destinitionPoint.X, _destinitionPoint.Y, BallRadius, BallRadius);
-
+					tmpGr.Clear(Color.White);
 					foreach (var ball in _balls.Where(ball => ball.IsAlive))
 					{
-						ball.Paint(tGr);
+						var brush = new SolidBrush(Color);
+						tmpGr.FillEllipse(brush, _destinitionPoint.X, _destinitionPoint.Y, BallDiameter, BallDiameter);
+						ball.Paint(tmpGr);
 					}
 
 					if (_balls.Count(ball => ball.IsAlive) == 0 && IsBusy)
 					{
-						// в потоке аниматора рисуем!!! в потоке increasingBall только двигаем
-						increasingBall.Start();
-						increasingBall.Paint(tGr);
-						if (!increasingBall.Thread.IsAlive)
+						tmpGr.Clear(Color.White);
+						_increasingBall.Start();
+						_increasingBall.Paint(tmpGr);
+						if (!_increasingBall.IsThreadAlive)
 						{
+							Color = Color.Black;
 							_balls.Clear();
-								//tGr.Clear(Color.White);
 							IsBusy = false;
 						}
 					}
 
-					_bGr.Render(Gr);
+					_bufGr.Render(Gr);
 					Thread.Sleep(30);
 				} while (true);
 			});

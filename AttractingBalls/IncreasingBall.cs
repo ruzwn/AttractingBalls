@@ -5,48 +5,53 @@ namespace AttractingBalls
 {
 	public class IncreasingBall
 	{
-		private Point _destinitionPoint;
-		private int _dx;
-		public Thread Thread;
+		private Point _locationPoint;
+		private int _diameter;
+		private readonly SolidBrush _brush;
+		private Thread _thread;
 
-		public IncreasingBall(Point destinitionPoint, int dx)
+		public bool IsThreadAlive => _thread?.IsAlive ?? false;
+
+		public IncreasingBall(Point locationPoint, int diameter, Color color)
 		{
-			_destinitionPoint = destinitionPoint;
-			_dx = dx;
+			_locationPoint = locationPoint;
+			_diameter = diameter;
+			_brush = new SolidBrush(color);
 		}
 
 		public void Start()
 		{
-			if (!(Thread?.IsAlive ?? true))
+			if (!(_thread?.IsAlive ?? true))
 			{
 				return;
 			}
-			
-			Thread = new Thread(() =>
+
+			_thread = new Thread(() =>
 			{
 				do
 				{
 					Thread.Sleep(30);
 				} while (Move());
 			});
-			Thread.Start();
+			_thread.IsBackground = true;
+			_thread.Start();
 		}
 
 		public void Paint(Graphics gr)
 		{
-			gr.FillEllipse(Brushes.Coral, _destinitionPoint.X, _destinitionPoint.Y, _dx, _dx);
+			gr.FillEllipse(_brush, _locationPoint.X, _locationPoint.Y, _diameter, _diameter);
 		}
 
 		private bool Move()
 		{
-			if (_dx > 2000)
+			if (_diameter > 2000)
 			{
 				return false;
 			}
-			
-			_destinitionPoint.X -= 10;
-			_destinitionPoint.Y -= 10;
-			_dx += 25;
+
+			_locationPoint.X -= 10;
+			_locationPoint.Y -= 10;
+			_diameter += 25;
 			return true;
 		}
 	}
